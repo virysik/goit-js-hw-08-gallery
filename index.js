@@ -17,8 +17,7 @@ const createMarkUp = (obj) => {
         </a>
       </li>
       `;
-    }
-    ).join('');
+    }).join('');
 }
 
 const refs = {
@@ -30,14 +29,14 @@ const refs = {
     lBoxOverlay: document.querySelector(".lightbox__overlay"),
 }
 
-
 const galleryEl = createMarkUp(galleryObj);
 refs.gallery.insertAdjacentHTML( 'afterbegin', galleryEl);
 refs.gallery.addEventListener('click', onClick);
 
+const imgSrcs = galleryObj.map(e => e.original);
+const imgAlts = galleryObj.map(e => e.description);
+
 //Реализация делегирования на галерее ul.js-gallery и получение url большого изображения.
-
-
 function onClick(e) {
     e.preventDefault();
     const imgSource = e.target.dataset.source;
@@ -46,9 +45,7 @@ function onClick(e) {
         return;
     }
     openModalWindow(e.target);
-
     closeModalWindow();
-    
 }
 
 //Открытие модального окна по клику на элементе галереи.
@@ -60,34 +57,64 @@ function openModalWindow(trg) {
     refs.imgLBox.alt = trg.alt;
 
 // Пролистывание изображений галереи в открытом модальном окне клавишами "влево" и "вправо".
-    window.addEventListener('keydown', (e) => {
-        if (e.code === "ArrowRight") {
-          
-        }
-         if (e.code === "ArrowLeft") {
-          
-        }
-})
+    window.addEventListener('keydown', onArrowClick);
 }
+
+function onArrowClick(e) {
+    
+        let currentSrcIndex = imgSrcs.indexOf(refs.imgLBox.src);
+        let lastSrcIndex = imgSrcs.indexOf(imgSrcs[imgSrcs.length - 1]);
+
+        let currentAltIndex = imgAlts.indexOf(refs.imgLBox.alt);
+        let lastAltIndex = imgAlts.indexOf(imgAlts[imgAlts.length - 1]);
+        
+        if (e.code === "ArrowRight") {
+            currentSrcIndex = currentSrcIndex !== lastSrcIndex ? currentSrcIndex + 1 : 0;
+            currentAltIndex = currentAltIndex !== lastAltIndex ? currentAltIndex + 1 : 0;
+
+        } else if (e.code === "ArrowLeft") {
+            currentSrcIndex = currentSrcIndex !== 0 ? currentSrcIndex - 1 : lastSrcIndex;
+            currentAltIndex = currentAltIndex !== 0 ? currentAltIndex - 1 : lastAltIndex;
+            
+        }
+    
+    setAttributes(currentSrcIndex, currentAltIndex); 
+}
+
+function setAttributes(src, alt) {
+      refs.imgLBox.src = imgSrcs[src];
+        refs.imgLBox.alt = imgAlts[alt];
+}
+
 //Закрытие модального окна по клику на кнопку button[data-action="close-lightbox"].
 function closeModalWindow() {
-    refs.closeBtn.addEventListener('click', onModalCloseBtn);
+    refs.closeBtn.addEventListener('click', onModalCloseClick);
 
     // Закрытие модального окна по клику на div.lightbox__overlay
-    refs.lBoxOverlay.addEventListener('click', onModalCloseBtn);
+    refs.lBoxOverlay.addEventListener('click', onModalCloseClick);
 
     // Закрытие модального окна по нажатию клавиши ESC
-    window.addEventListener('keydown', (e) => {
-        if (e.code === "Escape") {
-            onModalCloseBtn();
-        }
-    });
+    window.addEventListener('keydown', onEscClick);
 }
 
-function onModalCloseBtn() {
+function onEscClick(e) {
+    if (e.code !== "Escape") {
+        return;
+    }
+    onModalCloseClick();
+}
+
+function onModalCloseClick() {
     refs.modal.classList.remove("is-open");
-    
+    window.removeEventListener('keydown', onArrowClick);
+    window.removeEventListener('keydown', onEscClick);
+    refs.closeBtn.removeEventListener('click', onModalCloseClick);
+    refs.lBoxOverlay.removeEventListener('click', onModalCloseClick);
+   
     //Очистка значения атрибута src элемента img.lightbox__image.
     refs.imgLBox.src = "";
     refs.imgLBox.alt = "";
 }
+
+
+
