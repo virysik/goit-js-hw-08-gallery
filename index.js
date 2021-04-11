@@ -22,7 +22,6 @@ const createMarkUp = (obj) => {
 
 const refs = {
     gallery: document.querySelector(".js-gallery"),
-    imgGallery: document.querySelector(".gallery__image"),
     modal: document.querySelector(".js-lightbox"),
     imgLBox: document.querySelector(".lightbox__image"),
     closeBtn: document.querySelector('button[data-action="close-lightbox"]'),
