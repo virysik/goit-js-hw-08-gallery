@@ -60,21 +60,17 @@ function openModalWindow(trg) {
 }
 
 function onArrowClick(e) {
-    
         let currentSrcIndex = imgSrcs.indexOf(refs.imgLBox.src);
         let lastSrcIndex = imgSrcs.indexOf(imgSrcs[imgSrcs.length - 1]);
-
         let currentAltIndex = imgAlts.indexOf(refs.imgLBox.alt);
         let lastAltIndex = imgAlts.indexOf(imgAlts[imgAlts.length - 1]);
         
         if (e.code === "ArrowRight") {
             currentSrcIndex = currentSrcIndex !== lastSrcIndex ? currentSrcIndex + 1 : 0;
             currentAltIndex = currentAltIndex !== lastAltIndex ? currentAltIndex + 1 : 0;
-
         } else if (e.code === "ArrowLeft") {
             currentSrcIndex = currentSrcIndex !== 0 ? currentSrcIndex - 1 : lastSrcIndex;
             currentAltIndex = currentAltIndex !== 0 ? currentAltIndex - 1 : lastAltIndex;
-            
         }
     
     setAttributes(currentSrcIndex, currentAltIndex); 
